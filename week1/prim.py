@@ -42,11 +42,12 @@ def prim(edgeList, numNodes):
                 if edge[2] < lowestCost:
                     foundNodeX = edge[0]
                     foundNodeV = edge[1]
+                    lowestCost = edge[2]
             elif edge[1] in X and edge[0] in V:
                 if edge[2] < lowestCost:
                     foundNodeX = edge[1]
                     foundNodeV = edge[0]
-            lowestCost = edge[2]
+                    lowestCost = edge[2]
 
         print("foundNodeX: {0}, foundNodeV: {1}".format(foundNodeX, foundNodeV))
 
