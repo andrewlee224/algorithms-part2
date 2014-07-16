@@ -20,22 +20,6 @@ class Vertex(object):
         leader.componentCount += 1
         leader.outbound.append(self)
 
-class Component(object):
-    """
-    Object representing a group of connected vertices.
-    """
-
-    def __init__(self):
-        self._vdict = {}
-        self.total = 0
-        self.leader = None
-
-    def add(self, vertex):
-        self._vdict[vertex.key] = vertex
-        if not leader:
-            self.leader = vertex
-
-
 class UnionFind(object):
     
     def __init__(self, initList=None):
