@@ -17,6 +17,7 @@ class Vertex(object):
             leader = self
         self.leader = leader
         # leader vertex keeps count of all children vertices
+        # => number of vertices in a single component
         leader.componentCount += 1
         leader.outbound.append(self)
 
@@ -25,13 +26,18 @@ class UnionFind(object):
     def __init__(self, initList=None):
         self._vdict = {}
         self.totalVertices = 0
+        # number of all components in Union-Find
+        self.totalComponents = 0
         if initList:
             for el in initList:
                 self._vdict[el] = Vertex(el)
             self.totalVertices = len(initList)    
+            self.totalComponents = self.totalVertices
 
     def add(self, vertex):
         self._vdict[vertex.key] = vertex
+        self.totalVertices += 1
+        self.totalComponents += 1
 
     def find(self, key):
         """Return leader of the vertex requested by key"""
@@ -67,4 +73,6 @@ class UnionFind(object):
             l2.componentCount += l1.componentCount
             l2.outbound += l1.outbound
 
+        self.totalComponents -= 1
+        
         return True
