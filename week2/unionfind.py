@@ -47,7 +47,7 @@ class UnionFind(object):
 
         if self.find(key1) == self.find(key2):
             # keys in the same component, union already performed
-            return
+            return False
         
         v1 = self._vdict[key1]
         v2 = self._vdict[key2]
@@ -66,3 +66,5 @@ class UnionFind(object):
                 v.leader = l2
             l2.componentCount += l1.componentCount
             l2.outbound += l1.outbound
+
+        return True
