@@ -40,6 +40,15 @@ class UnionFind(object):
         return vertex.leader
 
     def union(self, key1, key2):
+        """
+        Perform a union operation on disconnected components c1
+        and c2 which contain vertices with key1 and key2.
+        """
+
+        if self.find(key1) == self.find(key2):
+            # keys in the same component, union already performed
+            return
+        
         v1 = self._vdict[key1]
         v2 = self._vdict[key2]
 
