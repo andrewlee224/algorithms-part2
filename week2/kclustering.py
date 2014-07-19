@@ -34,7 +34,11 @@ def kclustering(k, edgeList, numNodes):
         ufStruct.union(candidate[0], candidate[1])
 
     # max spacing is the smallest unused edge
-    maxSpacingEdge = edgeDeque.popleft() 
+    while edgeDeque:
+        maxSpacingEdge = edgeDeque.popleft()
+        if ufStruct.find(maxSpacingEdge[0]) != \
+                                    ufStruct.find(maxSpacingEdge[1]):
+            break
 
     return maxSpacingEdge
 
