@@ -73,17 +73,18 @@ def implicitClustering(nodeList, maxDist=3, bitsLabel=24):
 
     numClusterings = 0
     for i, node1 in enumerate(nodeList):
-        print("Node {} of {}".format(i+1, numNodes))
+        print("Node {} of {}".format(i, numNodes-1))
+        for sameLabelIndex in labelDict[node1]:
+            if sameLabelIndex != i:
+                ufstruct.union(i, sameLabelIndex)
 
         for mask in swapMasks:
             modLabel = swapByMask(node1, mask)
             if modLabel in labelDict:
                 for index in labelDict[modLabel]:
-                    success = ufstruct.union(i, index)
-                    if success:
-                        numClusterings += 1
+                    ufstruct.union(i, index)
 
-    k = len(nodeList) - numClusterings
+    k = ufstruct.totalComponents #len(nodeList) - numClusterings
     return k
 
 
