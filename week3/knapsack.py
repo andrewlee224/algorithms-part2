@@ -49,3 +49,11 @@ def optimalSubproblems(items, totalWeight):
                 optArray[i][w] = v1
 
     return optArray
+
+
+if __name__ == '__main__':
+    itemList, totalWeight, numItems = loadData()
+    optArray = optimalSubproblems(itemList, totalWeight)
+    print("Optimal value for knapsack problem " + 
+        "with {} items and {} available weight: {}".format(numItems,
+        totalWeight, optArray[-1][-1]))
