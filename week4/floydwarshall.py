@@ -20,30 +20,45 @@ def getGraph(fPath="g1.txt"):
 
 
 def floydwarshall(edgeDict, numNodes):
-    subproblemDict = {}
+    subproblemArr = [[]]
 
     # nodes numbering is 1-based
     # set up initial values for smallest subproblems
-    for i in range(1, numNodes+1):
-        subproblemDict[(i, i, 0)] = 0
-        for j in range(1, numNodes+1):
-            subproblemDict[(i, j, 0)] = edgeDict.get((i, j), float('+inf'))
+    for i in range(numNodes):
+        subproblemArr[0].append([])
+        for j in range(numNodes):
+            subproblemArr[0][i].append([])
+            if i == j:
+                subproblemArr[0][i][j] = 0
+                continue
+            subproblemArr[0][i][j] = edgeDict.get((i+1, j+1), float('+inf'))
 
     # iterate over subproblem sizes using 1..n
     # first nodes
-    for k in range(1, numNodes+1):
-        print("iteration {}".format(k))
-        
+    for k in range(1, numNodes):
+        subproblemArr.append([])
         # iterate over possible source nodes
-        for i in range(1, numNodes+1):
-            
-            # iterate over possible destination nodes
-            for j in range(1, numNodes+1):
-                val1 = subproblemDict[(i, j, k-1)]
-                val2 = subproblemDict[(i, k, k-1)] + subproblemDict[(k, j, k-1)]
-                if val1 >= val2:
-                    subproblemDict[(i, j, k)] = val1
-                else:
-                    subproblemDict[(i, j, k)] = val2
+        for i in range(numNodes):
+            subproblemArr[k].append([])
+            print("iteration {}, {}".format(k, i))
 
-    return subproblemDict
+            # iterate over possible destination nodes
+            for j in range(numNodes):
+                subproblemArr[k][i].append([])
+                val1 = subproblemArr[k-1][i][j]
+                val2 = subproblemArr[k-1][i][k] + subproblemArr[k-1][k][j] 
+                if val1 <= val2:
+                    subproblemArr[k][i][j] = val1
+                else:
+                    subproblemArr[k][i][j] = val2
+
+    return subproblemArr
+
+
+def main():
+    edgeDict, numNodes = getGraph()
+    subproblems = floydwarshall(edgeDict, numNodes)
+
+
+if __name__ == '__main__':
+    main()   
