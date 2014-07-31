@@ -2,10 +2,11 @@
 Floyd-Warshall algorithm for computing All-Pairs Shortest Paths.
 """
 
+import numpy as np
+cimport numpy as np
 
 def getGraph(fPath="g1.txt"):
 
-    # edgeList = []
     edgeDict = {}
 
     with open(fPath) as f:
@@ -23,20 +24,20 @@ def getGraph(fPath="g1.txt"):
 
 
 def floydwarshall(edgeDict, numNodes, maxEdgeCost):
-    subproblemArr = [[]]
+    cdef np.ndarray[np.int_t, ndim=2] oldArr = np.zeros((numNodes, numNodes), dtype='int')
+    cdef np.ndarray[np.int_t, ndim=2] newArr = np.zeros((numNodes, numNodes), dtype='int')
+
     cdef int k, i, j
     cdef int cNumNodes = numNodes
 
     # nodes numbering is 1-based
     # set up initial values for smallest subproblems
     for i in range(cNumNodes):
-        subproblemArr[0].append([])
         for j in range(cNumNodes):
-            subproblemArr[0][i].append([])
             if i == j:
-                subproblemArr[0][i][j] = 0
+                oldArr[i, j] = 0
                 continue
-            subproblemArr[0][i][j] = edgeDict.get((i+1, j+1), maxEdgeCost+1)
+            oldArr[i, j] = edgeDict.get((i+1, j+1), maxEdgeCost+1)
 
     # iterate over subproblem sizes using 1..n
     # first nodes
@@ -46,24 +47,22 @@ def floydwarshall(edgeDict, numNodes, maxEdgeCost):
     i = 0
     j = 0
     for k in range(1, cNumNodes):
-        subproblemArr.append([])
         print("iteration {}".format(k))
 
         # iterate over possible source nodes
         for i in range(cNumNodes):
-            subproblemArr[k].append([])
 
             # iterate over possible destination nodes
             for j in range(cNumNodes):
-                subproblemArr[k][i].append([])
-                val1 = subproblemArr[k-1][i][j]
-                val2 = subproblemArr[k-1][i][k] + subproblemArr[k-1][k][j] 
+                val1 = oldArr[i, j]
+                val2 = oldArr[i, k] + oldArr[k, j] 
                 if val1 <= val2:
-                    subproblemArr[k][i][j] = val1
+                    newArr[i, j] = val1
                 else:
-                    subproblemArr[k][i][j] = val2
+                    newArr[i, j] = val2
+        oldArr = newArr
 
-    return subproblemArr
+    return newArr
 
 
 def checkNegativeCycles(subproblemArr, numNodes):
@@ -71,7 +70,7 @@ def checkNegativeCycles(subproblemArr, numNodes):
     cdef int cNumNodes = numNodes
 
     for i in range(cNumNodes):
-        if subproblemArr[cNumNodes-1][i][i] < 0:
+        if subproblemArr[i][i] < 0:
             return True
 
     return False
@@ -84,7 +83,9 @@ def shortestPath(subproblemArr, numNodes):
 
     for i in range(cNumNodes):
         for j in range(cNumNodes):
-            arrVal = subproblemArr[cNumNodes-1][i][j]
+            if i == j:
+                continue
+            arrVal = subproblemArr[i][j]
             if arrVal < shortestVal:
                 shortestVal = arrVal 
 
