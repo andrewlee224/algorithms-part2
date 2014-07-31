@@ -37,10 +37,11 @@ def floydwarshall(edgeDict, numNodes):
     # first nodes
     for k in range(1, numNodes):
         subproblemArr.append([])
+        print("iteration {}".format(k))
         # iterate over possible source nodes
         for i in range(numNodes):
             subproblemArr[k].append([])
-            print("iteration {}, {}".format(k, i))
+            # print("iteration {}, {}".format(k, i))
 
             # iterate over possible destination nodes
             for j in range(numNodes):
@@ -55,9 +56,36 @@ def floydwarshall(edgeDict, numNodes):
     return subproblemArr
 
 
-def main():
-    edgeDict, numNodes = getGraph()
-    subproblems = floydwarshall(edgeDict, numNodes)
+def checkNegativeCycles(subproblemArr, numNodes):
+    for i in range(numNodes):
+        if subproblemArr[numNodes-1][i][i] < 0:
+            return True
+
+    return False
+
+
+def shortestPath(subproblemArr, numNodes):
+    shortestVal = float('+inf')
+
+    for i in range(numNodes):
+        for j in range(numNodes):
+            arrVal = subproblemArr[numNodes-1][i][j]
+            if arrVal < shortestVal:
+                shortestVal = arrVal 
+
+    return arrVal
+
+
+def main(fPath="g1.txt"):
+    edgeDict, numNodes = getGraph(fPath)
+    subproblems = floydwarshall(edgeDict, numNodes) 
+    negativeCycles = checkNegativeCycles(subproblems, numNodes)
+    print("Negative cycles: {}".format(negativeCycles))
+    if negativeCycles:
+        return
+
+    shortestVal = shortestPath(subproblems, numNodes)
+    print("Shortest of all-pairs shortest paths value: {}".format(shortestVal))
 
 
 if __name__ == '__main__':
