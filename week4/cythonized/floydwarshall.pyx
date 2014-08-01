@@ -1,9 +1,11 @@
 """
 Floyd-Warshall algorithm for computing All-Pairs Shortest Paths.
+Implementation with Cython and NumPy arrays, much faster than regular Python.
 """
 
 import numpy as np
 cimport numpy as np
+
 
 def getGraph(fPath="g1.txt"):
 
@@ -24,8 +26,8 @@ def getGraph(fPath="g1.txt"):
 
 
 def floydwarshall(edgeDict, numNodes, maxEdgeCost):
-    cdef np.ndarray[np.int_t, ndim=2] oldArr = np.zeros((numNodes, numNodes), dtype='int')
-    cdef np.ndarray[np.int_t, ndim=2] newArr = np.zeros((numNodes, numNodes), dtype='int')
+    cdef np.ndarray[np.float_t, ndim=2] oldArr = np.zeros((numNodes, numNodes), dtype='float')
+    cdef np.ndarray[np.float_t, ndim=2] newArr = np.zeros((numNodes, numNodes), dtype='float')
 
     cdef int k, i, j
     cdef int cNumNodes = numNodes
@@ -37,12 +39,12 @@ def floydwarshall(edgeDict, numNodes, maxEdgeCost):
             if i == j:
                 oldArr[i, j] = 0
                 continue
-            oldArr[i, j] = edgeDict.get((i+1, j+1), maxEdgeCost+1)
+            oldArr[i, j] = edgeDict.get((i+1, j+1), float('+inf'))
 
     # iterate over subproblem sizes using 1..n
     # first nodes
-    cdef int val1
-    cdef int val2
+    cdef float val1
+    cdef float val2
     k = 1
     i = 0
     j = 0
@@ -66,7 +68,7 @@ def floydwarshall(edgeDict, numNodes, maxEdgeCost):
 
 
 def checkNegativeCycles(subproblemArr, numNodes):
-    cdef int i, j
+    cdef int i
     cdef int cNumNodes = numNodes
 
     for i in range(cNumNodes):
@@ -79,6 +81,7 @@ def checkNegativeCycles(subproblemArr, numNodes):
 def shortestPath(subproblemArr, numNodes):
     cdef int i, j
     cdef int cNumNodes = numNodes
+    cdef float arrVal
     shortestVal = float('+inf')
 
     for i in range(cNumNodes):
@@ -89,7 +92,7 @@ def shortestPath(subproblemArr, numNodes):
             if arrVal < shortestVal:
                 shortestVal = arrVal 
 
-    return arrVal
+    return shortestVal
 
 
 def main(fPath):
