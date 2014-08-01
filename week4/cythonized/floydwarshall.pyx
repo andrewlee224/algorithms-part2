@@ -1,6 +1,7 @@
 """
 Floyd-Warshall algorithm for computing All-Pairs Shortest Paths.
 Implementation with Cython and NumPy arrays, much faster than regular Python.
+Space-optimized, using only the recent 2 biggest classes of subproblems.
 """
 
 import numpy as np
