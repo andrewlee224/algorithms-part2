@@ -73,7 +73,7 @@ def shortestPath(subproblemArr, numNodes):
             if arrVal < shortestVal:
                 shortestVal = arrVal 
 
-    return arrVal
+    return shortestVal
 
 
 def main(fPath="g1.txt"):
