@@ -15,18 +15,16 @@ def getGraph(fPath="g1.txt"):
     with open(fPath) as f:
         lines = f.readlines()
         numNodes, numEdges = map(int, lines[0].split())
-        maxEdgeCost = float('-inf') 
 
         for line in lines[1:]:
             node1, node2, edgeCost = [ int(el) for el in line.split() ]
             # edgeList.append((node1, node2, edgeCost))
             edgeDict[(node1, node2)] = edgeCost
-            maxEdgeCost = edgeCost if edgeCost > maxEdgeCost else maxEdgeCost
 
-    return edgeDict, numNodes, maxEdgeCost
+    return edgeDict, numNodes 
 
 
-def floydwarshall(edgeDict, numNodes, maxEdgeCost):
+def floydwarshall(edgeDict, numNodes):
     cdef np.ndarray[np.float_t, ndim=2] oldArr = np.zeros((numNodes, numNodes), dtype='float')
     cdef np.ndarray[np.float_t, ndim=2] newArr = np.zeros((numNodes, numNodes), dtype='float')
 
@@ -96,8 +94,8 @@ def shortestPath(subproblemArr, numNodes):
 
 
 def main(fPath):
-    edgeDict, numNodes, maxEdgeCost = getGraph(fPath)
-    subproblems = floydwarshall(edgeDict, numNodes, maxEdgeCost) 
+    edgeDict, numNodes = getGraph(fPath)
+    subproblems = floydwarshall(edgeDict, numNodes) 
     negativeCycles = checkNegativeCycles(subproblems, numNodes)
     print("Negative cycles: {}".format(negativeCycles))
     if negativeCycles:
