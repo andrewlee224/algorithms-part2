@@ -33,7 +33,6 @@ def floydwarshall(edgeDict, numNodes, maxEdgeCost):
     cdef int k, i, j
     cdef int cNumNodes = numNodes
 
-    # nodes numbering is 1-based
     # set up initial values for smallest subproblems
     for i in range(cNumNodes):
         for j in range(cNumNodes):
@@ -42,13 +41,13 @@ def floydwarshall(edgeDict, numNodes, maxEdgeCost):
                 continue
             oldArr[i, j] = edgeDict.get((i+1, j+1), float('+inf'))
 
-    # iterate over subproblem sizes using 1..n
-    # first nodes
     cdef float val1
     cdef float val2
     k = 1
     i = 0
     j = 0
+    # iterate over subproblem sizes using 1..n
+    # first nodes
     for k in range(1, cNumNodes):
         print("iteration {}".format(k))
 
