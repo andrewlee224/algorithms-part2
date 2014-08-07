@@ -50,25 +50,52 @@ def computeSets(maxCardinality):
     return sets
 
 
+def onesIndices(num):
+    """Returns 1-based indices of set bits"""
+
+    onesIndices = []
+    bl = num.bit_length()
+    for i in range(bl+1):
+        if num & 0b1 == 1:
+            onesIndices.append(i)
+        num = num >> 1
+    return onesIndices
+
+
 def tsp(points, sets, distances):
-    subproblemArr = np.zeros((2**(len(points) - 1), len(points)-1),
+    subproblemArr = np.ones((2**(len(points)), len(points)),
                                 dtype='float')
+    subproblemArr = subproblemArr * float('inf')
    
     # initialize base cases
-    for i in range(2**(len(points) - 1)):
-        subproblemArr[i, 1] = float('inf')
+    for i in range(2**(len(points))):
+        subproblemArr[i, 0] = float('inf')
+    subproblemArr[1, 0] = 0
 
-    for m in range(1, len(points)):
+    #for routeSet in sets[1]:
+    #    j = [ i for i, j in enumerate(bin(routeSet)) if j == '1' ][0]
+    #    subproblemArr[routeSet, j] = distances[0, j]
+
+    for m in range(2, len(points)+1):
         for routeSet in sets[m]:
+            # make sure that first vertex is in the route
+            if routeSet & 0b1 != 0b1:
+                continue
+
             # binary numbers are represented as strings, e.g. '0b10101'
-            jCandidates = [ i-2 for i, j in enumerate(bin(routeSet)) if j == '1' ]
+            jCandidates = onesIndices(routeSet) # [ i-2 for i, j in enumerate(bin(routeSet)) if j == '1' ]
+            #print("jCandidates: {}".format(jCandidates))
             for j in jCandidates:
-                xorMask = 2**(len(points) - j) # bin('0b' + '0' * j + '1')
+                if jCandidates == 0:
+                    continue
+
+                xorMask = 2**j # bin('0b' + '0' * j + '1')
                 previousSet = routeSet ^ xorMask
-                print(bin(routeSet))
-                print(bin(previousSet))
-                print('='*50)
+                #print(bin(routeSet))
+                #print(bin(previousSet))
+                #print('='*50)
                 bestVal = float('inf')
+                
                 for k in jCandidates:
                     if k == j:
                         continue
@@ -76,4 +103,10 @@ def tsp(points, sets, distances):
                     bestVal = val if val < bestVal else bestVal
                 subproblemArr[routeSet, j] = bestVal
 
-    return subproblemArr
+    # choose last hop in the route
+    shortestRoute = float('inf')
+    for j in range(1, len(points)):
+        val = subproblemArr[2**len(points)-1, j] + distances[j, 0]
+        shortestRoute = val if val < shortestRoute else shortestRoute
+
+    return subproblemArr, shortestRoute
