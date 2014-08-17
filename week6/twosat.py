@@ -27,24 +27,6 @@ def createGraph(fName="2sat1.txt"):
     return edgeList, numVars, numClauses
 
 
-def createAdjDict(edgeList):
-    adjDict = {}
-    revAdjDict = {}
-
-    for head, tail in edgeList:
-        if head not in adjDict:
-            adjDict[head] = [tail]
-        else:
-            adjDict[head].append(tail)
-
-        if tail not in revAdjDict:
-            adjDict[tail] = [head]
-        else:
-            adjDict[tail].append(head)
-
-    return adjDict, revAdjDict
-
-
 def twosat(edgeList, numVars):
     adjDict, revAdjDict, vertexSet = kr.createAdjDict(edgeList)
     print("Computing strong connected components..")
