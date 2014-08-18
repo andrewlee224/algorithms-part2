@@ -78,7 +78,7 @@ def kosaraju(adjDict, revAdjDict, vertexSet):
     t = 0
     verticeSet = set()
 
-    for index, vertex in enumerate(list(sorted(vertexSet, reverse=True))): #range(max(verticeSet), min(verticeSet)-1, -1):
+    for index, vertex in enumerate(list(sorted(vertexSet, reverse=True))):
         print("Inverted edge pass for vertex {}".format(index))
         if vertex not in explored:
             t = DFSftimes(revAdjDict, vertex, explored, ftimes, t)
@@ -86,7 +86,7 @@ def kosaraju(adjDict, revAdjDict, vertexSet):
     explored = set()
     leaders = dict()
 
-    for index, vertex in enumerate(range(t, 0, -1)): #range(max(verticeSet), min(verticeSet)-1, -1):
+    for index, vertex in enumerate(range(t, 0, -1)):
         print("Forward pass for vertex {}".format(index))
         if vertex not in explored:
             DFSleaders(adjDict, ftimes, vertex, vertex, explored, leaders)
